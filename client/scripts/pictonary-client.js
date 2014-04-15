@@ -108,13 +108,14 @@ $(document).ready(function() {
 		context = canvas[0].getContext('2d'),
 		lastpoint = null,
 		painting = false,
-		myturn = false;
+		myturn = false,
+    penWidth = 5;
 	
 	socket.on('draw', draw);
 	
 	function draw(line) {
 		context.lineJoin = 'round';
-		context.lineWidth = 2;
+		context.lineWidth = line.width;
 		context.strokeStyle = line.color;
 		context.beginPath();
 		
@@ -138,7 +139,7 @@ $(document).ready(function() {
 		if(myturn) {
 			painting = true;
 			var newpoint = { x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop},
-				line = { from: null, to: newpoint, color: selectedcolor.val() };
+				line = { from: null, to: newpoint, color: selectedcolor.val(), width: penWidth };
 			
 			draw(line);
 			lastpoint = newpoint;
@@ -149,7 +150,7 @@ $(document).ready(function() {
 	canvas.mousemove(function(e) {
 		if(myturn && painting) {
 			var newpoint = { x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop},
-				line = { from: lastpoint, to: newpoint, color: selectedcolor.val() };
+				line = { from: lastpoint, to: newpoint, color: selectedcolor.val(), width: penWidth };
 			
 			draw(line);
 			lastpoint = newpoint;
@@ -203,6 +204,11 @@ $(document).ready(function() {
 		chatinput.val('');
 		chatinput.focus();
 	});
+
+  $("input[name='penSize']").change(function() {
+    penWidth = $(this).val();
+  });
+  $("input[name='penSize'][value=5]").prop("checked", true);
 	
 	// ================================================
 	//                           pictionary logic section
